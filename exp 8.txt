@@ -1,0 +1,36 @@
+import requests
+# Reusable function to connect Python with Ollama
+def ask_ollama(prompt):
+ url = "http://localhost:11434/api/generate"
+ data = {
+ "model": "llama3.2",
+ "prompt": prompt,
+ "stream": False
+ }
+ response = requests.post(url, json=data)
+ response.raise_for_status()
+ return response.json()["response"]
+# Reusable function to display the AI response
+def display_result(result):
+ print("\n----- AI OUTPUT -----\n")
+ print(result)
+# Reusable function to save the AI response in a text file
+def save_result(result, filename):
+ with open(filename, "w", encoding="utf-8") as file:
+ file.write(result)
+ print("\nResult saved in", filename)
+faqs = """
+Admission: Applications are submitted through the college admission portal.
+Courses: The college offers undergraduate and postgraduate courses.
+Library: Library timings are 9 AM to 5 PM.
+Examination: Examination schedules are announced by the college.
+"""
+question = input("Ask a college-related question: ")
+prompt = f"""Answer the question using only the FAQ information below.
+If the answer is not available, clearly say:
+"The requested information is not found in the FAQ dataset."
+FAQ DATA:
+{faqs}
+Question: {question}"""
+result = ask_ollama(prompt)
+display_result(result)
